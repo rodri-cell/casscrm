@@ -51,10 +51,13 @@ A full marketing agency CRM with multi-role authentication (agency admin + clien
 | Client — Ana García | ana@empresa.com | (any) |
 | Client — Roberto López | roberto@tienda.com | (any) |
 
+- [x] Added `.env.local` with placeholder Supabase credentials (required for build)
+- [x] Build now passes successfully (`bun run build`)
+
 ## Next Steps (optional)
 
 - Create a Supabase project and run `supabase/schema.sql`
-- Add `.env.local` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Update `.env.local` with your actual `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - Create users in Supabase Auth (Dashboard → Authentication → Users)
 - Set `role` metadata on users (`agency` or `client`) so the trigger creates the right profile
 - Link client portal accounts: set `profile_id` on the `clients` table row
@@ -64,6 +67,8 @@ A full marketing agency CRM with multi-role authentication (agency admin + clien
 - Add file/report uploads
 
 ## Session History
+
+| 2026-02-22 | Fixed build by adding `.env.local` with placeholder credentials |
 
 | Date | Changes |
 |------|---------|
