@@ -1,10 +1,10 @@
-# Active Context: Next.js Starter Template
+# Active Context: Marketing Agency CRM
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**Project Status**: ✅ Marketing Agency CRM — Ready for use
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+A full marketing agency CRM with multi-role authentication (agency admin + client portal), built on Next.js 16 + TypeScript + Tailwind CSS 4.
 
 ## Recently Completed
 
@@ -14,74 +14,54 @@ The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. I
 - [x] ESLint configuration
 - [x] Memory bank documentation
 - [x] Recipe system for common features
+- [x] **Marketing Agency CRM** — full multi-role app:
+  - Auth system with `AuthContext` (localStorage-based, demo users)
+  - Login page with demo credential shortcuts
+  - Agency admin dashboard (`/dashboard`) — overview, clients, campaigns, reports
+  - Client portal (`/portal`) — personal dashboard, campaigns detail, reports
+  - Role-based routing (agency → `/dashboard`, client → `/portal`)
+  - Shared `Sidebar` and `DashboardLayout` components
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
+| `src/app/page.tsx` | Root redirect (login or dashboard) | ✅ Ready |
+| `src/app/layout.tsx` | Root layout + AuthProvider | ✅ Ready |
+| `src/app/login/page.tsx` | Login page with demo accounts | ✅ Ready |
+| `src/app/dashboard/page.tsx` | Agency main dashboard | ✅ Ready |
+| `src/app/dashboard/clients/page.tsx` | Client management table | ✅ Ready |
+| `src/app/dashboard/campaigns/page.tsx` | All campaigns view | ✅ Ready |
+| `src/app/dashboard/reports/page.tsx` | Agency-wide reports | ✅ Ready |
+| `src/app/portal/page.tsx` | Client portal home | ✅ Ready |
+| `src/app/portal/campaigns/page.tsx` | Client campaigns detail | ✅ Ready |
+| `src/app/portal/reports/page.tsx` | Client reports | ✅ Ready |
+| `src/components/layout/Sidebar.tsx` | Shared sidebar nav | ✅ Ready |
+| `src/components/layout/DashboardLayout.tsx` | Auth-guarded layout | ✅ Ready |
+| `src/context/AuthContext.tsx` | Auth context + provider | ✅ Ready |
+| `src/lib/auth.ts` | Types + mock data | ✅ Ready |
+| `src/lib/store.ts` | localStorage auth helpers | ✅ Ready |
 | `.kilocode/` | AI context & recipes | ✅ Ready |
 
-## Current Focus
+## Demo Accounts
 
-The template is ready. Next steps depend on user requirements:
+| Role | Email | Password |
+|------|-------|----------|
+| Agency Admin | admin@agencia.com | (any) |
+| Client — Ana García | ana@empresa.com | (any) |
+| Client — Roberto López | roberto@tienda.com | (any) |
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+## Next Steps (optional)
 
-## Quick Start Guide
-
-### To add a new page:
-
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
-```
-
-### To add components:
-
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
-```
-
-### To add a database:
-
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
-
-## Available Recipes
-
-| Recipe | File | Use Case |
-|--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
-
-## Pending Improvements
-
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
+- Connect to a real database (use `.kilocode/recipes/add-database.md`)
+- Add real authentication (NextAuth.js or similar)
+- Add campaign creation/editing forms
+- Add client invitation flow
+- Add file/report uploads
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-02-22 | Built full Marketing Agency CRM with multi-role auth, agency dashboard, client portal |
