@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import type { Campaign, CampaignRow } from "@/lib/database.types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -27,6 +27,7 @@ function rowToCampaign(row: CampaignRow & { clients?: { name: string } | null })
  * Fetch all campaigns (agency view), joined with client name.
  */
 export async function getCampaigns(): Promise<Campaign[]> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("campaigns")
     .select("*, clients(name)")
@@ -43,6 +44,7 @@ export async function getCampaigns(): Promise<Campaign[]> {
  * Fetch campaigns for a specific client (client portal view).
  */
 export async function getCampaignsByClientId(clientId: string): Promise<Campaign[]> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("campaigns")
     .select("*, clients(name)")
@@ -62,6 +64,7 @@ export async function getCampaignsByClientId(clientId: string): Promise<Campaign
 export async function createCampaign(
   input: Omit<Campaign, "id" | "clientName">
 ): Promise<Campaign> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("campaigns")
     .insert({
@@ -91,6 +94,7 @@ export async function updateCampaign(
   id: string,
   input: Partial<Omit<Campaign, "id" | "clientId" | "clientName">>
 ): Promise<Campaign> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("campaigns")
     .update({

@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import type { Client, ClientRow } from "@/lib/database.types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -25,6 +25,7 @@ function rowToClient(row: ClientRow, campaignCount = 0): Client {
  * Includes a campaign count via a Supabase aggregate.
  */
 export async function getClients(): Promise<Client[]> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("clients")
     .select("*, campaigns(count)")
@@ -45,6 +46,7 @@ export async function getClients(): Promise<Client[]> {
  * Fetch a single client by their profile_id (used in client portal).
  */
 export async function getClientByProfileId(profileId: string): Promise<Client | null> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("clients")
     .select("*, campaigns(count)")
@@ -67,6 +69,7 @@ export async function getClientByProfileId(profileId: string): Promise<Client | 
 export async function createClient(
   input: Omit<Client, "id" | "campaigns">
 ): Promise<Client> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("clients")
     .insert({
@@ -93,6 +96,7 @@ export async function updateClient(
   id: string,
   input: Partial<Omit<Client, "id" | "campaigns">>
 ): Promise<Client> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("clients")
     .update({

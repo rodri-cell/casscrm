@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import type { User, ProfileRow } from "@/lib/database.types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -24,6 +24,7 @@ export async function signIn(
   email: string,
   password: string
 ): Promise<User | null> {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -40,6 +41,7 @@ export async function signIn(
  * Sign out the current user.
  */
 export async function signOut(): Promise<void> {
+  const supabase = createClient();
   await supabase.auth.signOut();
 }
 
@@ -48,6 +50,7 @@ export async function signOut(): Promise<void> {
  * Returns null if not authenticated.
  */
 export async function getCurrentUser(): Promise<User | null> {
+  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -61,6 +64,7 @@ export async function getCurrentUser(): Promise<User | null> {
  * Fetch a user's profile from the profiles table.
  */
 export async function getProfile(userId: string): Promise<User | null> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -79,6 +83,7 @@ export async function getProfile(userId: string): Promise<User | null> {
 export function onAuthStateChange(
   callback: (user: User | null) => void
 ): () => void {
+  const supabase = createClient();
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange(async (event, session) => {
