@@ -53,10 +53,14 @@ A full marketing agency CRM with multi-role authentication (agency admin + clien
 
 ## Next Steps (optional)
 
-- Connect to a real database (use `.kilocode/recipes/add-database.md`)
-- Add real authentication (NextAuth.js or similar)
+- Create a Supabase project and run `supabase/schema.sql`
+- Add `.env.local` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Create users in Supabase Auth (Dashboard → Authentication → Users)
+- Set `role` metadata on users (`agency` or `client`) so the trigger creates the right profile
+- Link client portal accounts: set `profile_id` on the `clients` table row
+- Deploy to Hostinger (build with `bun build`, set env vars in hosting panel)
 - Add campaign creation/editing forms
-- Add client invitation flow
+- Add client invitation flow (send magic link via Supabase Auth)
 - Add file/report uploads
 
 ## Session History
@@ -65,3 +69,5 @@ A full marketing agency CRM with multi-role authentication (agency admin + clien
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-02-22 | Built full Marketing Agency CRM with multi-role auth, agency dashboard, client portal |
+| 2026-02-22 | Apple-inspired UI redesign — clean white theme, SF Pro fonts, frosted glass, subtle shadows |
+| 2026-02-22 | Supabase integration — replaced all mock data with real auth + DB services, added SQL schema, env vars |
