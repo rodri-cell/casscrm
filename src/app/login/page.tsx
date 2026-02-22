@@ -12,13 +12,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // If already logged in, redirect
   if (user) {
-    if (user.role === "agency") {
-      router.replace("/dashboard");
-    } else {
-      router.replace("/portal");
-    }
+    if (user.role === "agency") router.replace("/dashboard");
+    else router.replace("/portal");
     return null;
   }
 
@@ -26,42 +22,82 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     const success = await login(email, password);
     if (success) {
       const stored = JSON.parse(localStorage.getItem("crm_auth_user") || "{}");
-      if (stored.role === "agency") {
-        router.push("/dashboard");
-      } else {
-        router.push("/portal");
-      }
+      router.push(stored.role === "agency" ? "/dashboard" : "/portal");
     } else {
-      setError("Email o contraseña incorrectos. Prueba con los datos de demo.");
+      setError("Email o contraseña incorrectos.");
     }
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo / Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-2xl mb-4 shadow-lg shadow-purple-500/30">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <div
+      className="min-h-screen flex items-center justify-center p-6"
+      style={{
+        background: "linear-gradient(145deg, #f0f4ff 0%, #fafafa 50%, #f5f0ff 100%)",
+      }}
+    >
+      {/* Decorative blobs */}
+      <div
+        className="fixed top-0 left-0 w-96 h-96 rounded-full opacity-30 pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, #a78bfa 0%, transparent 70%)",
+          transform: "translate(-30%, -30%)",
+          filter: "blur(60px)",
+        }}
+      />
+      <div
+        className="fixed bottom-0 right-0 w-96 h-96 rounded-full opacity-20 pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, #60a5fa 0%, transparent 70%)",
+          transform: "translate(30%, 30%)",
+          filter: "blur(60px)",
+        }}
+      />
+
+      <div className="w-full max-w-sm relative">
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <div
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5 shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+              boxShadow: "0 8px 32px rgba(99, 102, 241, 0.35)",
+            }}
+          >
+            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white">Marketing Pro</h1>
-          <p className="text-slate-400 mt-1">Plataforma de gestión de clientes</p>
+          <h1
+            className="text-3xl font-semibold tracking-tight"
+            style={{ color: "#1d1d1f", letterSpacing: "-0.02em" }}
+          >
+            Marketing Pro
+          </h1>
+          <p className="mt-1.5 text-sm" style={{ color: "#6e6e73" }}>
+            Inicia sesión en tu cuenta
+          </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-slate-800/60 backdrop-blur border border-slate-700/50 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-xl font-semibold text-white mb-6">Iniciar sesión</h2>
-
+        {/* Card */}
+        <div
+          className="rounded-3xl p-8"
+          style={{
+            background: "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow: "0 2px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
+          }}
+        >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label
+                className="block text-sm font-medium mb-1.5"
+                style={{ color: "#1d1d1f" }}
+              >
                 Email
               </label>
               <input
@@ -70,12 +106,28 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 required
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                style={{
+                  background: "#f5f5f7",
+                  border: "1.5px solid transparent",
+                  color: "#1d1d1f",
+                }}
+                onFocus={(e) => {
+                  e.target.style.border = "1.5px solid #6366f1";
+                  e.target.style.background = "#fff";
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = "1.5px solid transparent";
+                  e.target.style.background = "#f5f5f7";
+                }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label
+                className="block text-sm font-medium mb-1.5"
+                style={{ color: "#1d1d1f" }}
+              >
                 Contraseña
               </label>
               <input
@@ -84,12 +136,28 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                style={{
+                  background: "#f5f5f7",
+                  border: "1.5px solid transparent",
+                  color: "#1d1d1f",
+                }}
+                onFocus={(e) => {
+                  e.target.style.border = "1.5px solid #6366f1";
+                  e.target.style.background = "#fff";
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = "1.5px solid transparent";
+                  e.target.style.background = "#f5f5f7";
+                }}
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
+              <div
+                className="px-4 py-3 rounded-xl text-sm"
+                style={{ background: "#fff1f0", color: "#c0392b", border: "1px solid #fecaca" }}
+              >
                 {error}
               </div>
             )}
@@ -97,52 +165,51 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition shadow-lg shadow-purple-500/20"
+              className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all mt-2"
+              style={{
+                background: loading
+                  ? "#a5b4fc"
+                  : "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                boxShadow: loading ? "none" : "0 4px 16px rgba(99,102,241,0.35)",
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? "Entrando..." : "Iniciar sesión"}
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div className="mt-6 pt-6 border-t border-slate-700">
-            <p className="text-xs text-slate-400 mb-3 font-medium uppercase tracking-wide">Cuentas de demo</p>
+          {/* Demo accounts */}
+          <div className="mt-6 pt-6" style={{ borderTop: "1px solid #f0f0f0" }}>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "#aeaeb2" }}
+            >
+              Cuentas de demo
+            </p>
             <div className="space-y-2">
-              <button
-                onClick={() => { setEmail("admin@agencia.com"); setPassword("demo"); }}
-                className="w-full text-left px-3 py-2 bg-slate-700/40 hover:bg-slate-700 rounded-lg transition group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+              {[
+                { label: "Agencia (Admin)", email: "admin@agencia.com", color: "#6366f1" },
+                { label: "Cliente — Ana García", email: "ana@empresa.com", color: "#0ea5e9" },
+                { label: "Cliente — Roberto López", email: "roberto@tienda.com", color: "#0ea5e9" },
+              ].map((acc) => (
+                <button
+                  key={acc.email}
+                  onClick={() => { setEmail(acc.email); setPassword("demo"); }}
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all"
+                  style={{ background: "#f5f5f7" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ebebeb")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#f5f5f7")}
+                >
+                  <span
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: acc.color }}
+                  />
                   <div>
-                    <p className="text-xs font-medium text-slate-200 group-hover:text-white">Agencia (Admin)</p>
-                    <p className="text-xs text-slate-400">admin@agencia.com</p>
+                    <p className="text-xs font-medium" style={{ color: "#1d1d1f" }}>{acc.label}</p>
+                    <p className="text-xs" style={{ color: "#6e6e73" }}>{acc.email}</p>
                   </div>
-                </div>
-              </button>
-              <button
-                onClick={() => { setEmail("ana@empresa.com"); setPassword("demo"); }}
-                className="w-full text-left px-3 py-2 bg-slate-700/40 hover:bg-slate-700 rounded-lg transition group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
-                  <div>
-                    <p className="text-xs font-medium text-slate-200 group-hover:text-white">Cliente — Ana García</p>
-                    <p className="text-xs text-slate-400">ana@empresa.com</p>
-                  </div>
-                </div>
-              </button>
-              <button
-                onClick={() => { setEmail("roberto@tienda.com"); setPassword("demo"); }}
-                className="w-full text-left px-3 py-2 bg-slate-700/40 hover:bg-slate-700 rounded-lg transition group"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
-                  <div>
-                    <p className="text-xs font-medium text-slate-200 group-hover:text-white">Cliente — Roberto López</p>
-                    <p className="text-xs text-slate-400">roberto@tienda.com</p>
-                  </div>
-                </div>
-              </button>
+                </button>
+              ))}
             </div>
           </div>
         </div>

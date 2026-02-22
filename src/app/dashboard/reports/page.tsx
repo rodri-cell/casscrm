@@ -12,7 +12,6 @@ export default function ReportsPage() {
   const avgCPC = totalClicks > 0 ? (totalSpent / totalClicks).toFixed(2) : "0";
   const avgCPA = totalConversions > 0 ? (totalSpent / totalConversions).toFixed(2) : "0";
 
-  // Per-client summary
   const clientSummary = MOCK_CLIENTS.map((client) => {
     const camps = MOCK_CAMPAIGNS.filter((c) => c.clientId === client.id);
     return {
@@ -26,70 +25,123 @@ export default function ReportsPage() {
 
   return (
     <DashboardLayout requiredRole="agency">
-      <div className="p-8">
+      <div className="p-8 max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">Informes</h1>
-          <p className="text-slate-400 mt-1">Rendimiento global de todas las campañas</p>
+          <h1
+            className="text-2xl font-semibold"
+            style={{ color: "#1d1d1f", letterSpacing: "-0.02em" }}
+          >
+            Informes
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: "#6e6e73" }}>
+            Rendimiento global de todas las campañas
+          </p>
         </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <KpiCard label="Impresiones" value={totalImpressions.toLocaleString()} icon="👁️" />
-          <KpiCard label="Clics" value={totalClicks.toLocaleString()} icon="🖱️" />
-          <KpiCard label="Conversiones" value={totalConversions.toLocaleString()} icon="🎯" />
-          <KpiCard label="Invertido" value={`€${totalSpent.toLocaleString()}`} icon="💸" />
+          {[
+            { label: "Impresiones", value: totalImpressions.toLocaleString(), icon: "👁️" },
+            { label: "Clics", value: totalClicks.toLocaleString(), icon: "🖱️" },
+            { label: "Conversiones", value: totalConversions.toLocaleString(), icon: "🎯" },
+            { label: "Invertido", value: `€${totalSpent.toLocaleString()}`, icon: "💸" },
+          ].map((k) => (
+            <div
+              key={k.label}
+              className="rounded-2xl p-5"
+              style={{ background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium" style={{ color: "#6e6e73" }}>{k.label}</p>
+                <span className="text-xl">{k.icon}</span>
+              </div>
+              <p className="text-2xl font-semibold" style={{ color: "#1d1d1f", letterSpacing: "-0.02em" }}>
+                {k.value}
+              </p>
+            </div>
+          ))}
         </div>
 
         {/* Ratios */}
         <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-            <p className="text-slate-400 text-sm mb-2">CTR Medio</p>
-            <p className="text-white text-3xl font-bold">{avgCTR}%</p>
-            <p className="text-slate-500 text-xs mt-1">Clics / Impresiones</p>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-            <p className="text-slate-400 text-sm mb-2">CPC Medio</p>
-            <p className="text-white text-3xl font-bold">€{avgCPC}</p>
-            <p className="text-slate-500 text-xs mt-1">Coste por clic</p>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center">
-            <p className="text-slate-400 text-sm mb-2">CPA Medio</p>
-            <p className="text-white text-3xl font-bold">€{avgCPA}</p>
-            <p className="text-slate-500 text-xs mt-1">Coste por conversión</p>
-          </div>
+          {[
+            { label: "CTR Medio", value: `${avgCTR}%`, sub: "Clics / Impresiones" },
+            { label: "CPC Medio", value: `€${avgCPC}`, sub: "Coste por clic" },
+            { label: "CPA Medio", value: `€${avgCPA}`, sub: "Coste por conversión" },
+          ].map((r) => (
+            <div
+              key={r.label}
+              className="rounded-2xl p-6 text-center"
+              style={{ background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+            >
+              <p className="text-xs font-medium mb-3" style={{ color: "#6e6e73" }}>{r.label}</p>
+              <p
+                className="text-3xl font-semibold"
+                style={{ color: "#1d1d1f", letterSpacing: "-0.03em" }}
+              >
+                {r.value}
+              </p>
+              <p className="text-xs mt-2" style={{ color: "#aeaeb2" }}>{r.sub}</p>
+            </div>
+          ))}
         </div>
 
         {/* Per-client table */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-800">
-            <h2 className="text-white font-semibold">Rendimiento por Cliente</h2>
+        <div
+          className="rounded-2xl overflow-hidden"
+          style={{ background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+        >
+          <div className="px-6 py-4" style={{ borderBottom: "1px solid #f5f5f7" }}>
+            <h2 className="text-sm font-semibold" style={{ color: "#1d1d1f" }}>
+              Rendimiento por Cliente
+            </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-800">
-                  <th className="text-left px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">Cliente</th>
-                  <th className="text-right px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">Impresiones</th>
-                  <th className="text-right px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">Clics</th>
-                  <th className="text-right px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">Conversiones</th>
-                  <th className="text-right px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">Invertido</th>
-                  <th className="text-right px-6 py-3 text-slate-400 text-xs font-medium uppercase tracking-wide">CTR</th>
+                <tr style={{ borderBottom: "1px solid #f5f5f7" }}>
+                  {["Cliente", "Impresiones", "Clics", "Conversiones", "Invertido", "CTR"].map((h, i) => (
+                    <th
+                      key={h}
+                      className={`px-6 py-3 text-xs font-semibold uppercase tracking-wide ${i === 0 ? "text-left" : "text-right"}`}
+                      style={{ color: "#aeaeb2" }}
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
-                {clientSummary.map((c) => {
-                  const ctr = c.totalImpressions > 0 ? ((c.totalClicks / c.totalImpressions) * 100).toFixed(2) : "0";
+              <tbody>
+                {clientSummary.map((c, i) => {
+                  const ctr = c.totalImpressions > 0
+                    ? ((c.totalClicks / c.totalImpressions) * 100).toFixed(2)
+                    : "0";
                   return (
-                    <tr key={c.id} className="hover:bg-slate-800/30 transition">
+                    <tr
+                      key={c.id}
+                      style={{ borderBottom: i < clientSummary.length - 1 ? "1px solid #f5f5f7" : "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#fafafa")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
                       <td className="px-6 py-4">
-                        <p className="text-white text-sm font-medium">{c.name}</p>
-                        <p className="text-slate-400 text-xs">{c.company}</p>
+                        <p className="text-sm font-medium" style={{ color: "#1d1d1f" }}>{c.name}</p>
+                        <p className="text-xs" style={{ color: "#aeaeb2" }}>{c.company}</p>
                       </td>
-                      <td className="px-6 py-4 text-right text-slate-300 text-sm">{c.totalImpressions.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-slate-300 text-sm">{c.totalClicks.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-slate-300 text-sm">{c.totalConversions}</td>
-                      <td className="px-6 py-4 text-right text-slate-300 text-sm">€{c.totalSpent.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-slate-300 text-sm">{ctr}%</td>
+                      <td className="px-6 py-4 text-right text-sm" style={{ color: "#3a3a3c" }}>
+                        {c.totalImpressions.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm" style={{ color: "#3a3a3c" }}>
+                        {c.totalClicks.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm" style={{ color: "#3a3a3c" }}>
+                        {c.totalConversions}
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm font-medium" style={{ color: "#1d1d1f" }}>
+                        €{c.totalSpent.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm" style={{ color: "#3a3a3c" }}>
+                        {ctr}%
+                      </td>
                     </tr>
                   );
                 })}
@@ -99,17 +151,5 @@ export default function ReportsPage() {
         </div>
       </div>
     </DashboardLayout>
-  );
-}
-
-function KpiCard({ label, value, icon }: { label: string; value: string; icon: string }) {
-  return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-slate-400 text-sm">{label}</p>
-        <span className="text-xl">{icon}</span>
-      </div>
-      <p className="text-white text-2xl font-bold">{value}</p>
-    </div>
   );
 }
