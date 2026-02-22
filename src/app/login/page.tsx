@@ -1,36 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
-  const { login, user } = useAuth();
+  const { login, user, loading } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  if (user) {
-    if (user.role === "agency") router.replace("/dashboard");
-    else router.replace("/portal");
-    return null;
-  }
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace(user.role === "agency" ? "/dashboard" : "/portal");
+    }
+  }, [user, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
     const success = await login(email, password);
-    if (success) {
-      const stored = JSON.parse(localStorage.getItem("crm_auth_user") || "{}");
-      router.push(stored.role === "agency" ? "/dashboard" : "/portal");
-    } else {
+    if (!success) {
       setError("Email o contraseña incorrectos.");
     }
-    setLoading(false);
+    setSubmitting(false);
   };
+
+  if (loading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "#f5f5f7" }}
+      >
+        <div
+          className="w-8 h-8 rounded-full border-2 animate-spin"
+          style={{ borderColor: "#6366f1", borderTopColor: "transparent" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -164,54 +175,23 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all mt-2"
               style={{
-                background: loading
+                background: submitting
                   ? "#a5b4fc"
                   : "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                boxShadow: loading ? "none" : "0 4px 16px rgba(99,102,241,0.35)",
-                cursor: loading ? "not-allowed" : "pointer",
+                boxShadow: submitting ? "none" : "0 4px 16px rgba(99,102,241,0.35)",
+                cursor: submitting ? "not-allowed" : "pointer",
               }}
             >
-              {loading ? "Entrando..." : "Iniciar sesión"}
+              {submitting ? "Entrando..." : "Iniciar sesión"}
             </button>
           </form>
 
-          {/* Demo accounts */}
-          <div className="mt-6 pt-6" style={{ borderTop: "1px solid #f0f0f0" }}>
-            <p
-              className="text-xs font-semibold uppercase tracking-widest mb-3"
-              style={{ color: "#aeaeb2" }}
-            >
-              Cuentas de demo
-            </p>
-            <div className="space-y-2">
-              {[
-                { label: "Agencia (Admin)", email: "admin@agencia.com", color: "#6366f1" },
-                { label: "Cliente — Ana García", email: "ana@empresa.com", color: "#0ea5e9" },
-                { label: "Cliente — Roberto López", email: "roberto@tienda.com", color: "#0ea5e9" },
-              ].map((acc) => (
-                <button
-                  key={acc.email}
-                  onClick={() => { setEmail(acc.email); setPassword("demo"); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all"
-                  style={{ background: "#f5f5f7" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#ebebeb")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "#f5f5f7")}
-                >
-                  <span
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ background: acc.color }}
-                  />
-                  <div>
-                    <p className="text-xs font-medium" style={{ color: "#1d1d1f" }}>{acc.label}</p>
-                    <p className="text-xs" style={{ color: "#6e6e73" }}>{acc.email}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="mt-6 text-center text-xs" style={{ color: "#aeaeb2" }}>
+            ¿Problemas para acceder? Contacta con tu administrador.
+          </p>
         </div>
       </div>
     </div>

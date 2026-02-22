@@ -1,8 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/context/AuthContext";
-import { getClientCampaigns } from "@/lib/auth";
+import { getClientByProfileId } from "@/lib/services/clients";
+import { getCampaignsByClientId } from "@/lib/services/campaigns";
+import type { Campaign } from "@/lib/database.types";
 
 const statusColors: Record<string, { bg: string; text: string }> = {
   active: { bg: "#d1fae5", text: "#065f46" },
@@ -36,7 +39,20 @@ const typeLabels: Record<string, string> = {
 
 export default function ClientCampaignsPage() {
   const { user } = useAuth();
-  const campaigns = user ? getClientCampaigns(user.id) : [];
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    getClientByProfileId(user.id).then(async (client) => {
+      if (client) {
+        const camps = await getCampaignsByClientId(client.id);
+        setCampaigns(camps);
+      }
+      setLoading(false);
+    });
+  }, [user]);
 
   return (
     <DashboardLayout requiredRole="client">
@@ -53,7 +69,14 @@ export default function ClientCampaignsPage() {
           </p>
         </div>
 
-        {campaigns.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <div
+              className="w-8 h-8 rounded-full border-2 animate-spin"
+              style={{ borderColor: "#0ea5e9", borderTopColor: "transparent" }}
+            />
+          </div>
+        ) : campaigns.length === 0 ? (
           <div
             className="rounded-2xl p-16 text-center"
             style={{ background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
@@ -69,7 +92,7 @@ export default function ClientCampaignsPage() {
         ) : (
           <div className="space-y-4">
             {campaigns.map((camp) => {
-              const pct = Math.round((camp.spent / camp.budget) * 100);
+              const pct = camp.budget > 0 ? Math.round((camp.spent / camp.budget) * 100) : 0;
               const ctr = camp.impressions > 0
                 ? ((camp.clicks / camp.impressions) * 100).toFixed(2)
                 : "0";

@@ -1,33 +1,48 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { User } from "@/lib/auth";
-import { loadUser, login as doLogin, logout as doLogout } from "@/lib/store";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { User } from "@/lib/database.types";
+import { signIn, signOut, getCurrentUser, onAuthStateChange } from "@/lib/services/auth";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => loadUser());
-  const loading = false;
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Load current session on mount
+    getCurrentUser().then((u) => {
+      setUser(u);
+      setLoading(false);
+    });
+
+    // Subscribe to auth state changes (token refresh, sign out from another tab, etc.)
+    const unsubscribe = onAuthStateChange((u) => {
+      setUser(u);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const result = doLogin(email, password);
-    if (result) {
-      setUser(result);
-      return true;
-    }
-    return false;
+    setLoading(true);
+    const result = await signIn(email, password);
+    setUser(result);
+    setLoading(false);
+    return result !== null;
   };
 
-  const logout = () => {
-    doLogout();
+  const logout = async (): Promise<void> => {
+    await signOut();
     setUser(null);
   };
 
